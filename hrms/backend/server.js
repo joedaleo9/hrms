@@ -28,9 +28,9 @@ app.use('/api/requests', requestRoutes);
 
 // Public endpoint - lets the login screen show which brand/company this system belongs to
 app.get('/api/settings/brand', (req, res) => {
-  const data = db.load();
-  res.json({ brand_name: data.settings.brand_name || 'HRMS' });
-});
+     const data = db.load();
+     res.json({ brand_name: data.settings.brand_name || 'HRMS' });
+   });
 
 // Serve the frontend
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
