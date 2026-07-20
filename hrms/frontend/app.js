@@ -53,7 +53,41 @@ $('#login-form').addEventListener('submit', async (e) => {
     $('#login-error').style.display = 'block';
   }
 });
-
+$('#change-password-btn').addEventListener('click', () => {
+     openModal(`
+       <h3>Change password</h3>
+       <form id="change-password-form">
+         <label>Current password</label><input name="currentPassword" type="password" required>
+         <label>New password</label><input name="newPassword" type="password" minlength="8" required>
+         <label>Confirm new password</label><input name="confirmPassword" type="password" minlength="8" required>
+         <div id="change-password-error" style="color:var(--rust); font-size:13px; margin-bottom:14px; display:none;"></div>
+         <div class="btn-row">
+           <button type="submit" class="btn-small" style="padding:10px 18px;">Update password</button>
+           <button type="button" class="btn-secondary" id="cancel-modal">Cancel</button>
+         </div>
+       </form>
+     `);
+     $('#cancel-modal').addEventListener('click', closeModal);
+     $('#change-password-form').addEventListener('submit', async (e) => {
+       e.preventDefault();
+       const fd = Object.fromEntries(new FormData(e.target));
+       const errorEl = $('#change-password-error');
+       errorEl.style.display = 'none';
+       if (fd.newPassword !== fd.confirmPassword) {
+         errorEl.textContent = "New password and confirmation don't match.";
+         errorEl.style.display = 'block';
+         return;
+       }
+       try {
+         await api('/auth/change-password', { method: 'POST', body: { currentPassword: fd.currentPassword, newPassword: fd.newPassword } });
+         closeModal();
+         toast('Password updated');
+       } catch (err) {
+         errorEl.textContent = err.message;
+         errorEl.style.display = 'block';
+       }
+     });
+   });
 $('#logout-btn').addEventListener('click', () => {
   state = { token: null, user: null };
   localStorage.removeItem('hrms_token');
