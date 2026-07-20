@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRMS — Workforce Console</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --ink:#1c2321;
+    --paper:#f6f4ef;
+    --panel:#ffffff;
+    --line:#dcd7cb;
+    --moss:#3f5b4f;
+    --moss-dark:#2b4038;
+    --rust:#a8462c;
+    --muted:#6b6f6a;
+    --gold:#b8934a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  h1,h2,h3,.brand{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* Login screen */
+  #login-view{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(63,91,79,0.08), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(168,70,44,0.06), transparent 40%),
+      var(--paper);
+  }
+  .login-card{
+    width:100%;
+    max-width:400px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:40px 36px;
+    box-shadow:0 1px 2px rgba(0,0,0,0.04);
+  }
+  .login-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--moss);
+    margin-bottom:10px;
+  }
+  .login-card h1{
+    font-size:28px;
+    font-weight:600;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .login-card p.sub{color:var(--muted); font-size:14px; margin:0 0 28px;}
+  label{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
+    font-family:'IBM Plex Mono',monospace;
+    letter-spacing:0.02em;
+  }
+  input{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+    background:#fdfcfa;
+    margin-bottom:18px;
+    color:var(--ink);
+  }
+  input:focus{outline:2px solid var(--moss); outline-offset:1px; border-color:var(--moss);}
+  button{
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    border:none;
+    border-radius:3px;
+  }
+  .btn-primary{
+    width:100%;
+    padding:12px;
+    background:var(--moss);
+    color:#fff;
+    font-size:14px;
+    letter-spacing:0.01em;
+  }
+  .btn-primary:hover{background:var(--moss-dark);}
+  #login-error{
+    color:var(--rust);
+    font-size:13px;
+    margin-top:14px;
+    display:none;
+  }
+
+  /* App shell */
+  #app-view{display:none; min-height:100vh;}
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 28px;
+    background:var(--moss-dark);
+    color:#f1efe8;
+  }
+  .topbar .brand{font-size:19px; font-weight:600; letter-spacing:0.01em;}
+  .topbar .brand span{color:#c9a876;}
+  .topbar-right{display:flex; align-items:center; gap:16px; font-size:13px;}
+  .role-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    background:rgba(255,255,255,0.12);
+    padding:4px 9px;
+    border-radius:20px;
+  }
+  #logout-btn{background:transparent; color:#f1efe8; border:1px solid rgba(255,255,255,0.3); padding:6px 12px; font-size:12px; border-radius:3px;}
+  #logout-btn:hover{background:rgba(255,255,255,0.1);}
+
+  .layout{display:flex;}
+  nav.sidebar{
+    width:200px;
+    min-height:calc(100vh - 57px);
+    background:var(--panel);
+    border-right:1px solid var(--line);
+    padding:20px 0;
+    flex-shrink:0;
+  }
+  nav.sidebar button{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    text-align:left;
+    padding:11px 24px;
+    background:transparent;
+    color:var(--ink);
+    font-size:13.5px;
+    font-weight:500;
+    border-left:3px solid transparent;
+  }
+  nav.sidebar button:hover{background:#f0ede4;}
+  nav.sidebar button.active{
+    border-left:3px solid var(--rust);
+    background:#f0ede4;
+    color:var(--rust);
+    font-weight:600;
+  }
+  main.content{flex:1; padding:28px 32px; max-width:1100px;}
+  main.content h2{font-size:22px; margin:0 0 4px;}
+  .section-sub{color:var(--muted); font-size:13.5px; margin:0 0 22px;}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:20px 22px;
+    margin-bottom:20px;
+  }
+  .stat-row{display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap;}
+  .stat{
+    flex:1;
+    min-width:140px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:3px solid var(--moss);
+    border-radius:3px;
+    padding:14px 16px;
+  }
+  .stat .num{font-family:'Fraunces',serif; font-size:26px; font-weight:600;}
+  .stat .label{font-size:11.5px; color:var(--muted); font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.06em;}
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  th{
+    text-align:left;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--muted);
+    padding:8px 10px;
+    border-bottom:1px solid var(--line);
+  }
+  td{padding:10px 10px; border-bottom:1px solid #ece8dd;}
+  tr:last-child td{border-bottom:none;}
+  .tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    text-transform:uppercase;
+    padding:3px 8px;
+    border-radius:20px;
+    letter-spacing:0.04em;
+  }
+  .tag-green{background:#e4ede7; color:var(--moss-dark);}
+  .tag-amber{background:#f4ead2; color:#8a6c1f;}
+  .tag-red{background:#f4e1db; color:var(--rust);}
+  .tag-gray{background:#eae7dd; color:var(--muted);}
+
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 16px;}
+  .form-grid label{margin-top:2px;}
+  .btn-row{display:flex; gap:10px; margin-top:6px;}
+  .btn-secondary{background:transparent; border:1px solid var(--line); color:var(--ink); padding:9px 16px; font-size:13px;}
+  .btn-secondary:hover{background:#f0ede4;}
+  .btn-small{background:var(--moss); color:#fff; padding:6px 12px; font-size:12px;}
+  .btn-small.reject{background:var(--rust);}
+  .btn-add{background:var(--rust); color:#fff; padding:9px 18px; font-size:13px; margin-bottom:16px;}
+
+  .empty-state{padding:30px; text-align:center; color:var(--muted); font-size:13.5px;}
+  .toast{
+    position:fixed; bottom:24px; right:24px;
+    background:var(--ink); color:#fdfcfa;
+    padding:12px 18px; border-radius:4px;
+    font-size:13.5px; display:none; z-index:50;
+  }
+  .modal-backdrop{
+    display:none; position:fixed; inset:0; background:rgba(28,35,33,0.45);
+    align-items:center; justify-content:center; z-index:40;
+  }
+  .modal{
+    background:var(--panel); border-radius:4px; padding:28px 30px;
+    width:100%; max-width:460px; max-height:85vh; overflow-y:auto;
+  }
+  .modal h3{margin:0 0 18px; font-size:19px;}
+</style>
+</head>
+<body>
+
+<div id="login-view">
+  <div class="login-card">
+    <div class="login-eyebrow" id="brand-eyebrow">Workforce Console</div>
+    <h1>Sign in</h1>
+    <p class="sub">Enter your employee credentials to continue.</p>
+    <form id="login-form">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" required autocomplete="username">
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" required autocomplete="current-password">
+      <button type="submit" class="btn-primary">Sign in</button>
+      <div id="login-error"></div>
+    </form>
+  </div>
+</div>
+
+<div id="app-view">
+  <div class="topbar">
+    <div class="brand" id="topbar-brand">HRMS<span>.</span></div>
+    <div class="topbar-right">
+      <span id="user-name"></span>
+      <span class="role-pill" id="user-role"></span>
+      <button id="logout-btn">Sign out</button>
+    </div>
+  </div>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
