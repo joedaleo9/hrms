@@ -49,16 +49,34 @@ app.get('/api/emergency-reset', (req, res) => {
     return res.status(400).send('Provide ?email=...&password=... (password must be at least 8 characters) in the URL.');
   }
 
-  const bcrypt = require('bcryptjs');
+ const bcrypt = require('bcryptjs');
   const data = db.load();
-  const user = data.employees.find(e => e.email === email);
+  let user = data.employees.find(e => e.email === email);
+
   if (!user) {
-    return res.status(404).send(`No account found with email: ${email}`);
+    const nextId = (data._next_id.employees || 1);
+    data._next_id.employees = nextId + 1;
+    user = {
+      id: nextId,
+      employee_code: `EMP${String(nextId).padStart(4, '0')}`,
+      full_name: 'Admin',
+      email,
+      password_hash: '',
+      role: 'admin',
+      department: data.settings.brand_name || null,
+      designation: 'System Admin',
+      date_of_joining: new Date().toISOString().slice(0, 10),
+      phone: null,
+      status: 'active',
+      created_at: new Date().toISOString()
+    };
+    data.employees.push(user);
   }
+
   user.password_hash = bcrypt.hashSync(password, 10);
   db.save(data);
 
-  res.send(`Password reset successfully for ${email}. You can now log in with the new password. Consider removing EMERGENCY_RESET_SECRET from your environment variables once done.`);
+  res.send(`Account ready for ${email}. You can now log in with the new password. Consider removing EMERGENCY_RESET_SECRET from your environment variables once done.`);
 });
 
 // Serve the frontend
