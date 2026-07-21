@@ -22,10 +22,13 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { request_type, details } = req.body;
+  const { request_type, details, amount } = req.body;
   const validTypes = ['salary_certificate', 'experience_letter', 'id_reissue', 'reimbursement', 'other'];
   if (!request_type || !validTypes.includes(request_type)) {
     return res.status(400).json({ error: 'A valid request_type is required' });
+  }
+  if (request_type === 'reimbursement' && (!amount || Number(amount) <= 0)) {
+    return res.status(400).json({ error: 'A valid amount is required for reimbursement requests' });
   }
   const data = load();
   const record = {
@@ -33,6 +36,7 @@ router.post('/', (req, res) => {
     employee_id: req.user.id,
     request_type,
     details: details || null,
+    amount: request_type === 'reimbursement' ? Number(amount) : null,
     status: 'pending',
     admin_note: null,
     reviewed_by: null,

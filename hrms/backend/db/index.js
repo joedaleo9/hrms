@@ -13,9 +13,22 @@ const EMPTY_DB = {
   attendance: [],
   leave_requests: [],
   requests: [],
+  job_openings: [],
+  candidates: [],
+  exits: [],
+  documents: [],
+  loans: [],
+  assets: [],
+  dependents: [],
+  skills: [],
+  grades: [],
   audit_log: [],
   settings: {},
-  _next_id: { employees: 1, payroll: 1, attendance: 1, leave_requests: 1, requests: 1, audit_log: 1 }
+  _next_id: {
+    employees: 1, payroll: 1, attendance: 1, leave_requests: 1, requests: 1,
+    job_openings: 1, candidates: 1, exits: 1, documents: 1, loans: 1, assets: 1,
+    dependents: 1, skills: 1, grades: 1, audit_log: 1
+  }
 };
 
 function load() {

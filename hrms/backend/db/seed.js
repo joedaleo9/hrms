@@ -60,7 +60,7 @@ function main() {
       email: adminEmail,
       password_hash: hash,
       role: 'admin',
-      department: brandName,
+      department: 'Administration',
       designation: 'System Admin',
       date_of_joining: new Date().toISOString().slice(0, 10),
       phone: null,

@@ -4,11 +4,21 @@ A standalone HR management system with individual employee logins. Built with No
 
 ## Modules included
 
-- **Employees** — records, roles (Admin / HR / Employee), department, designation
+- **Employees** — records, roles (Admin / HR / Employee), department/vertical, designation, grade
 - **Payroll** — monthly pay generation, viewable only by Admin/HR and the employee it belongs to
 - **Attendance** — self check-in/check-out, admin correction
 - **Leave** — request, approve, reject
-- **Requests** — salary certificates, experience letters, ID reissue, reimbursements, and other ad-hoc HR requests
+- **Requests** — salary certificates, experience letters, ID reissue, structured reimbursement claims (with amount), and other ad-hoc HR requests
+- **Recruitment** — job openings and a candidate pipeline (applied → interview → offer → hired/rejected), Admin/HR only
+- **Employee exits** — employees submit their own resignation; Admin/HR track it through notice period → clearance → completed, with a built-in **gratuity/EOS estimate** using the standard UAE Labour Law formula. Marking an exit "completed" automatically deactivates that employee's account
+- **Documents** — passport, visa, work permit, driving license, Emirates ID tracking with expiry dates. Dashboard surfaces anything expiring within 60 days
+- **Loans & advances** — employees request salary advances/loans; Admin/HR approve and track repayment
+- **Assets** — allocate and return company equipment per employee
+- **Grades** — Admin defines job grades with tied benefits; assign a grade to each employee
+- **Dependents & Skills/Education** — employees maintain their own dependents and skills/education/certifications from their profile
+
+### Not yet built (flagged as future additions)
+Performance management (reviews, 360° feedback), learning management, employee engagement (surveys/rewards), succession planning, WPS bank transfer file generation, and a native mobile app are larger standalone efforts not included in this build.
 
 ## Security model
 

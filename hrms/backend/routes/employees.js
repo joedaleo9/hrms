@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(authenticate);
 
 function safeEmp(e) {
-  const { password_hash, ...rest } = e;
+  const { password_hash, security_answer_hash, ...rest } = e;
   return rest;
 }
 
@@ -35,7 +35,7 @@ router.get('/:id', (req, res) => {
 
 // Create employee - admin/hr only
 router.post('/', requireRole('admin', 'hr'), (req, res) => {
-  const { employee_code, full_name, email, password, role, department, designation, date_of_joining, phone } = req.body;
+  const { employee_code, full_name, email, password, role, department, designation, date_of_joining, phone, grade } = req.body;
   if (!employee_code || !full_name || !email || !password) {
     return res.status(400).json({ error: 'employee_code, full_name, email, and password are required' });
   }
@@ -58,6 +58,7 @@ router.post('/', requireRole('admin', 'hr'), (req, res) => {
     designation: designation || null,
     date_of_joining: date_of_joining || null,
     phone: phone || null,
+    grade: grade || null,
     status: 'active',
     created_at: new Date().toISOString()
   };
@@ -71,7 +72,7 @@ router.post('/', requireRole('admin', 'hr'), (req, res) => {
 // Update employee
 router.put('/:id', (req, res) => {
   const id = Number(req.params.id);
-  const { full_name, department, designation, date_of_joining, phone, role, status } = req.body;
+  const { full_name, department, designation, date_of_joining, phone, role, status, grade } = req.body;
   const data = load();
   const emp = data.employees.find(e => e.id === id);
   if (!emp) return res.status(404).json({ error: 'Employee not found' });
@@ -90,6 +91,7 @@ router.put('/:id', (req, res) => {
   emp.phone = phone || null;
   emp.role = role || 'employee';
   emp.status = status || 'active';
+  emp.grade = grade || null;
 
   data.audit_log.push({ id: nextId(data, 'audit_log'), actor_id: req.user.id, action: 'update_employee', target: String(id), details: null, created_at: new Date().toISOString() });
   save(data);
